@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Animated, Dimensions, Text, View, StyleSheet } from 'react-native';
-import get from 'lodash.get';
+import React, { useState, useRef, useEffect } from "react";
+import PropTypes from "prop-types";
+import { Animated, Dimensions, Text, View, StyleSheet } from "react-native";
+import get from "lodash.get";
 // import { getFormattedCurrency } from '~/utils/units'
 
 const ComparisonTableRow = (props) => {
@@ -11,8 +11,10 @@ const ComparisonTableRow = (props) => {
     getBestBy,
     fixed,
     cellTextAlign,
+    cellTextStyle,
     headerCellContent,
     headerCellStyle,
+    headerCellTextStyle,
     cellContent,
     cellStyle,
     rowStyle,
@@ -24,14 +26,14 @@ const ComparisonTableRow = (props) => {
     headerCellWidth,
     cellWidth,
     innerScrollX,
-    scrollY
+    scrollY,
   } = props;
 
   let bestValueIndices = [];
   // Only sort them if user provide getBestBy order string/comparison function to sort the values
   if (comparing && getBestBy) {
     const valuesOriginal =
-      typeof comparing === 'function'
+      typeof comparing === "function"
         ? comparing(data)
         : data.map((item) => getComparingValue(item, comparing));
 
@@ -45,12 +47,12 @@ const ComparisonTableRow = (props) => {
 
   const mergedBestCellStyle = {
     ...styles.bestCell,
-    ...bestCellStyle
+    ...bestCellStyle,
   };
 
   const mergedBestCellTextStyle = {
     ...styles.bestCellText,
-    ...bestCellTextStyle
+    ...bestCellTextStyle,
   };
 
   function getComparingValue(item, comparing) {
@@ -59,12 +61,12 @@ const ComparisonTableRow = (props) => {
 
   function getSortedValues(valuesOriginal, getBestBy) {
     let valuesSorted = [...valuesOriginal];
-    console.log('valuesSorted: ', valuesSorted);
-    if (typeof getBestBy === 'function') {
+    console.log("valuesSorted: ", valuesSorted);
+    if (typeof getBestBy === "function") {
       valuesSorted.sort(getBestBy);
-    } else if (getBestBy === 'asc') {
+    } else if (getBestBy === "asc") {
       valuesSorted.sort((a, b) => a - b);
-    } else if (getBestBy === 'desc') {
+    } else if (getBestBy === "desc") {
       valuesSorted.sort((a, b) => b - a);
     }
     return valuesSorted;
@@ -98,17 +100,23 @@ const ComparisonTableRow = (props) => {
                 translateX: innerScrollX.interpolate({
                   inputRange: [0, 1000],
                   outputRange: [0, 1000],
-                  extrapolate: 'clamp'
-                })
-              }
-            ]
-          }
+                  extrapolate: "clamp",
+                }),
+              },
+            ],
+          },
         ]}
       >
-        {typeof headerCellContent === 'function' ? (
+        {typeof headerCellContent === "function" ? (
           headerCellContent()
         ) : (
-          <Text style={styles.headerCellText}>{headerCellContent}</Text>
+          <Text
+            style={
+              headerCellTextStyle ? headerCellTextStyle : styles.headerCellText
+            }
+          >
+            {headerCellContent}
+          </Text>
         )}
       </Animated.View>
     );
@@ -117,7 +125,7 @@ const ComparisonTableRow = (props) => {
   function renderTemplateCellContent(cellContent, item) {
     const comparingValue = getComparingValue(item, comparing);
     if (comparing && !comparingValue) {
-      return '-';
+      return "-";
     }
 
     return comparingValue;
@@ -134,8 +142,8 @@ const ComparisonTableRow = (props) => {
       item,
       index,
       isBest,
-      cellTextStyle: styles.cellText,
-      bestCellTextStyle: mergedBestCellTextStyle
+      cellTextStyle: cellTextStyle ? cellTextStyle : styles.cellText,
+      bestCellTextStyle: mergedBestCellTextStyle,
     });
 
     if (React.isValidElement(customCellContent)) {
@@ -145,9 +153,9 @@ const ComparisonTableRow = (props) => {
     return (
       <Text
         style={[
-          styles.cellText,
+          cellTextStyle ? cellTextStyle : styles.cellText,
           cellTextAlign && { textAlign: cellTextAlign },
-          isBest && mergedBestCellTextStyle
+          isBest && mergedBestCellTextStyle,
         ]}
       >
         {renderTemplateCellContent(customCellContent, item)}
@@ -168,11 +176,11 @@ const ComparisonTableRow = (props) => {
                 translateY: scrollY.interpolate({
                   inputRange: [0, 10000],
                   outputRange: [0, 10000],
-                  extrapolate: 'clamp'
-                })
-              }
-            ]
-          }
+                  extrapolate: "clamp",
+                }),
+              },
+            ],
+          },
       ]}
     >
       {headerCellContent !== undefined && renderHeaderCellContent()}
@@ -180,7 +188,7 @@ const ComparisonTableRow = (props) => {
         <Animated.View
           style={[
             styles.mergedCell,
-            { width: Dimensions.get('window').width - headerCellWidth },
+            { width: Dimensions.get("window").width - headerCellWidth },
             cellStyle,
             innerScrollX && {
               transform: [
@@ -188,14 +196,14 @@ const ComparisonTableRow = (props) => {
                   translateX: innerScrollX.interpolate({
                     inputRange: [0, 1000],
                     outputRange: [0, 1000],
-                    extrapolate: 'clamp'
-                  })
-                }
-              ]
-            }
+                    extrapolate: "clamp",
+                  }),
+                },
+              ],
+            },
           ]}
         >
-          {cellContent && typeof cellContent === 'function'
+          {cellContent && typeof cellContent === "function"
             ? cellContent({ data })
             : null}
         </Animated.View>
@@ -211,11 +219,11 @@ const ComparisonTableRow = (props) => {
                 styles.cell,
                 cellStyle,
                 { width: cellWidth },
-                isBest && mergedBestCellStyle
+                isBest && mergedBestCellStyle,
               ]}
               key={index}
             >
-              {typeof cellContent === 'function' ? (
+              {typeof cellContent === "function" ? (
                 renderCustomCellContent(
                   cellContent,
                   index,
@@ -226,9 +234,9 @@ const ComparisonTableRow = (props) => {
               ) : (
                 <Text
                   style={[
-                    styles.cellText,
+                    cellTextStyle ? cellTextStyle : styles.cellText,
                     cellTextAlign && { textAlign: cellTextAlign },
-                    isBest && mergedBestCellTextStyle
+                    isBest && mergedBestCellTextStyle,
                   ]}
                 >
                   {renderTemplateCellContent(cellContent, item)}
@@ -245,55 +253,55 @@ const ComparisonTableRow = (props) => {
 const styles = StyleSheet.create({
   row: {
     borderTopWidth: 1,
-    borderColor: '#E5E5E5',
-    flexDirection: 'row'
+    borderColor: "#E5E5E5",
+    flexDirection: "row",
   },
   fixedRow: {
-    position: 'relative',
-    zIndex: 100
+    position: "relative",
+    zIndex: 100,
   },
   headerCell: {
-    position: 'relative',
+    position: "relative",
     zIndex: 10,
-    backgroundColor: '#F9F9FB',
+    backgroundColor: "#F9F9FB",
     paddingVertical: 11,
     paddingHorizontal: 12,
     borderRightWidth: 1,
-    borderColor: '#E5E5E5'
+    borderColor: "#E5E5E5",
   },
   cell: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRightWidth: 1,
-    borderColor: '#E5E5E5'
+    borderColor: "#E5E5E5",
   },
   mergedCell: {
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingVertical: 10,
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
   },
   headerCellText: {
-    fontSize: 20
+    fontSize: 20,
   },
   cellText: {
-    fontSize: 20
+    fontSize: 20,
   },
   bestCell: {
-    backgroundColor: 'rgba(255,236,170,0.2)'
+    backgroundColor: "rgba(255,236,170,0.2)",
   },
   bestCellText: {
-    color: '#F6571A',
-    fontWeight: 'bold'
-  }
+    color: "#F6571A",
+    fontWeight: "bold",
+  },
 });
 
 ComparisonTableRow.propTypes = {
   data: PropTypes.array,
   comparing: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   getBestBy: PropTypes.oneOfType([
-    PropTypes.oneOf(['asc', 'desc']),
-    PropTypes.func
+    PropTypes.oneOf(["asc", "desc"]),
+    PropTypes.func,
   ]),
   headerCellContent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   headerCellStyle: PropTypes.object,
@@ -302,8 +310,10 @@ ComparisonTableRow.propTypes = {
   rowStyle: PropTypes.object,
   bestCellStyle: PropTypes.object,
   bestCellTextStyle: PropTypes.object,
+  cellTextStyle: PropTypes.object,
+  headerCellTextStyle: PropTypes.object,
   isHighlightBest: PropTypes.bool,
-  innerScrollX: PropTypes.object
+  innerScrollX: PropTypes.object,
 };
 
 ComparisonTableRow.defaultProps = {};
